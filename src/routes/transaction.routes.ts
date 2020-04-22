@@ -11,6 +11,7 @@ transactionRouter.get('/', async (request, response) => {
   try {
     const transactions = await transactionsRepository.all();
     const balance = await transactionsRepository.getBalance();
+
     return response.json({
       transactions,
       balance,
@@ -28,8 +29,8 @@ transactionRouter.post('/', (request, response) => {
     );
 
     const transaction = transactionService.execute({ title, value, type });
-
     return response.json(transaction);
+
     // TODO
   } catch (err) {
     return response.status(400).json({ error: err.message });

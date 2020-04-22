@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 import Transaction from '../models/Transaction';
 
 interface Balance {
@@ -24,18 +25,34 @@ class TransactionsRepository {
   }
 
   public getBalance(): Balance {
-    /**
-     * (amount, { type, value })
-     * @type and @value are being desctructured
-     *
-     */
-    return this.transactions.reduce(
-      (amount, { type, value }) => ({
-        ...amount,
-        [type]: amount[type] + Number(value),
-      }),
-      { income: 0, outcome: 0, total: 0 },
+    const balance = this.transactions.reduce(
+      (accumulator: Balance, transaction: Transaction) => {
+        accumulator[transaction.type] += Number(transaction.value);
+        accumulator.total = accumulator.income - accumulator.outcome;
+        return accumulator;
+      },
+      {
+        income: 0,
+        outcome: 0,
+        total: 0,
+      },
     );
+    return balance;
+
+    // /**
+    //  * (amount, { type, value })
+    //  * @type and @value are being desctructured
+    //  *
+    //  */
+
+    // // return this.transactions.reduce(
+    // //   (amount, { type, value }) => ({
+    // //     ...amount,
+    // //     [type]: amount[type] + Number(value),
+    // //     total: amount['income'] - (amount['outcome'] + value),
+    // //   }),
+    // //   { income: 0, outcome: 0, total: 0 },
+    // // );
   }
 
   public create({ title, value, type }: TransactionDTO): Transaction {
